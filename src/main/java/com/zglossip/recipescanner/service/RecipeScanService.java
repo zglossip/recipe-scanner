@@ -63,6 +63,15 @@ public class RecipeScanService {
 		}
 		LOGGER.info("Selected extractor={}", extractor.getClass().getSimpleName());
 		String text = extractor.extract(file);
+		if (text == null || text.isBlank()) {
+			LOGGER.warn("OCR produced no text filename={} contentType={}",
+					file.getOriginalFilename(),
+					file.getContentType());
+			throw new ResponseStatusException(
+					HttpStatus.UNPROCESSABLE_ENTITY,
+					"No text could be extracted from the file."
+			);
+		}
 		Recipe recipe = recipeParser.parse(text);
 		if (recipe != null) {
 			int tagCount = recipe.tags() == null ? 0 : recipe.tags().size();
