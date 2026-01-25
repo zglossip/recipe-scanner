@@ -1,9 +1,13 @@
 spring:
   application:
     name: recipeScanner
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
 
 food-history-api:
-  base-url: ""
+  base-url: "http://localhost:5000"
 
 ocr:
   language: "eng"
