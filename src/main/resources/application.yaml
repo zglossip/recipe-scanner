@@ -1,3 +1,9 @@
 spring:
   application:
     name: recipeScanner
+
+food-history-api:
+  base-url: ""
+
+ocr:
+  language: "eng"
