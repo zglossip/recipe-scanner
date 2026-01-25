@@ -7,7 +7,9 @@ import com.zglossip.recipescanner.extract.TextExtractor;
 import com.zglossip.recipescanner.parse.RecipeParser;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.HttpStatus;
 
 @Service
 public class RecipeScanService {
@@ -29,7 +31,10 @@ public class RecipeScanService {
 		TextExtractor extractor = textExtractors.stream()
 				.filter(candidate -> candidate.supports(file))
 				.findFirst()
-				.orElseThrow(() -> new IllegalArgumentException("Unsupported file type."));
+				.orElseThrow(() -> new ResponseStatusException(
+						HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+						"Unsupported file type."
+				));
 		String text = extractor.extract(file);
 		Recipe recipe = recipeParser.parse(text);
 		foodHistoryApiClient.send(recipe);
