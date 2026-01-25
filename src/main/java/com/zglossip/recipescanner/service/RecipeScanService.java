@@ -28,6 +28,12 @@ public class RecipeScanService {
 	}
 
 	public RecipeScanResponse scan(MultipartFile file) {
+		if (file == null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File is required.");
+		}
+		if (file.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File is empty.");
+		}
 		TextExtractor extractor = textExtractors.stream()
 				.filter(candidate -> candidate.supports(file))
 				.findFirst()
