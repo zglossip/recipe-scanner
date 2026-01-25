@@ -1,6 +1,5 @@
 package com.zglossip.recipescanner.api;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -13,11 +12,5 @@ public class ApiExceptionHandler {
 		String message = ex.getReason() != null ? ex.getReason() : "Request failed.";
 		return ResponseEntity.status(ex.getStatusCode())
 				.body(new ApiErrorResponse("error", message));
-	}
-
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ApiErrorResponse> handleUnexpectedException(Exception ex) {
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body(new ApiErrorResponse("error", "Unexpected error."));
 	}
 }
