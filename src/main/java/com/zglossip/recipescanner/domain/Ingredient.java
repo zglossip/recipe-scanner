@@ -1,4 +1,4 @@
 package com.zglossip.recipescanner.domain;
 
-public record Ingredient(String description) {
+public record Ingredient(String name, Double quantity, String uom, String notes) {
 }
