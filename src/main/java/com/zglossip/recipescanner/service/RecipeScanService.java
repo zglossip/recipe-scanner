@@ -46,14 +46,17 @@ public class RecipeScanService {
 
 	public RecipeScanResponse scan(MultipartFile file) {
 		validateFile(file);
+
 		LOGGER.info("Scanning recipe file name={} contentType={} sizeBytes={}",
 				file.getOriginalFilename(),
 				file.getContentType(),
 				file.getSize());
+
 		TextExtractor extractor = textExtractors.stream()
 				.filter(candidate -> candidate.supports(file))
 				.findFirst()
 				.orElse(null);
+
 		if (extractor == null) {
 			LOGGER.warn("Unsupported file type contentType={}", file.getContentType());
 			throw new ResponseStatusException(
@@ -61,8 +64,11 @@ public class RecipeScanService {
 					"Unsupported file type."
 			);
 		}
+
 		LOGGER.info("Selected extractor={}", extractor.getClass().getSimpleName());
+
 		String text = extractor.extract(file);
+
 		if (text == null || text.isBlank()) {
 			LOGGER.warn("OCR produced no text filename={} contentType={}",
 					file.getOriginalFilename(),
