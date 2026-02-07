@@ -69,6 +69,8 @@ public class RecipeScanService {
 
 		String text = extractor.extract(file);
 
+		LOGGER.info("Rendered text: {}", text);
+
 		if (text == null || text.isBlank()) {
 			LOGGER.warn("OCR produced no text filename={} contentType={}",
 					file.getOriginalFilename(),
