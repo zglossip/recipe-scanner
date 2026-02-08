@@ -1,5 +1,7 @@
 package com.zglossip.recipescanner.extract;
 
+import net.sourceforge.tess4j.Tesseract;
+import net.sourceforge.tess4j.TesseractException;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
@@ -13,6 +15,12 @@ import java.io.UncheckedIOException;
 
 @Component
 public class PdfOcrTextExtractor implements TextExtractor {
+	private final TesseractFactory tesseractFactory;
+
+	public PdfOcrTextExtractor(TesseractFactory tesseractFactory) {
+		this.tesseractFactory = tesseractFactory;
+	}
+
 	@Override
 	public boolean supports(MultipartFile file) {
 		return file != null
@@ -21,17 +29,33 @@ public class PdfOcrTextExtractor implements TextExtractor {
 
 	@Override
 	public String extract(MultipartFile file) {
+		if (file == null || file.isEmpty()) {
+			throw new IllegalArgumentException("File is required");
+		}
+
 		try (PDDocument document = Loader.loadPDF(file.getBytes())) {
-			if(document.getNumberOfPages() == 0) {
+			int pageCount = document.getNumberOfPages();
+			if (pageCount == 0) {
 				return "";
 			}
 
 			PDFRenderer renderer = new PDFRenderer(document);
-			BufferedImage page1 = renderer.renderImageWithDPI(0, 300, ImageType.RGB);
+			Tesseract tesseract = tesseractFactory.create();
 
-			return "page1=" + page1.getWidth() + "x" + page1.getHeight();
+			StringBuilder extractedText = new StringBuilder();
+			for (int pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+				BufferedImage page = renderer.renderImageWithDPI(pageIndex, 300, ImageType.RGB);
+				extractedText.append(tesseract.doOCR(page));
+				if (pageIndex < pageCount - 1) {
+					extractedText.append("\n\n");
+				}
+			}
+
+			return extractedText.toString();
 		} catch (IOException e) {
 			throw new UncheckedIOException("Failed to read PDF", e);
+		} catch (TesseractException e) {
+			throw new IllegalStateException("Failed to OCR rendered PDF page", e);
 		}
 	}
 }
