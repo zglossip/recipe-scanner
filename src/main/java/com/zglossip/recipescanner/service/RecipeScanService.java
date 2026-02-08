@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 @Service
 public class RecipeScanService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RecipeScanService.class);
+	private static final Logger RENDERED_TEXT_LOGGER = LoggerFactory.getLogger("renderedTextLogger");
 	private final List<TextExtractor> textExtractors;
 	private final RecipeParser recipeParser;
 	private final FoodHistoryApiClient foodHistoryApiClient;
@@ -52,6 +53,8 @@ public class RecipeScanService {
 		LOGGER.info("Selected extractor={}", extractor.getClass().getSimpleName());
 
 		String text = extractor.extract(file);
+
+		RENDERED_TEXT_LOGGER.info("Rendered text: {}", text);
 
 		if (text == null || text.isBlank()) {
 			LOGGER.warn("OCR produced no text filename={} contentType={}",
