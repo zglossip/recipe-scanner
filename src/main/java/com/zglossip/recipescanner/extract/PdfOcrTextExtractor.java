@@ -23,8 +23,18 @@ public class PdfOcrTextExtractor implements TextExtractor {
 
 	@Override
 	public boolean supports(MultipartFile file) {
-		return file != null
-				&& "application/pdf".equalsIgnoreCase(file.getContentType());
+		if (file == null) {
+			return false;
+		}
+		String contentType = file.getContentType();
+		if (contentType == null) {
+			return false;
+		}
+		int separator = contentType.indexOf(';');
+		if (separator >= 0) {
+			contentType = contentType.substring(0, separator);
+		}
+		return "application/pdf".equalsIgnoreCase(contentType.trim());
 	}
 
 	@Override
