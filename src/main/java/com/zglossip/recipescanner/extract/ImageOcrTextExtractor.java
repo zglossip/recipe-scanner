@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Locale;
 
 @Component
 public class ImageOcrTextExtractor implements TextExtractor {
@@ -19,19 +20,12 @@ public class ImageOcrTextExtractor implements TextExtractor {
 
 	@Override
 	public boolean supports(MultipartFile file) {
-		String contentType = file == null ? null : file.getContentType();
-		if (contentType == null) {
-			return false;
-		}
-		return contentType.startsWith("image/");
+		String contentType = normalizeContentType(file == null ? null : file.getContentType());
+		return contentType != null && contentType.startsWith("image/");
 	}
 
 	@Override
 	public String extract(MultipartFile file) {
-		if (file == null || file.isEmpty()) {
-			throw new IllegalArgumentException("File is required");
-		}
-
 		try {
 			BufferedImage image = ImageIO.read(file.getInputStream());
 			if (image == null) {
@@ -43,5 +37,17 @@ public class ImageOcrTextExtractor implements TextExtractor {
 		} catch (TesseractException e) {
 			throw new IllegalStateException("Failed to OCR image file", e);
 		}
+	}
+
+	private String normalizeContentType(String contentType) {
+		if (contentType == null) {
+			return null;
+		}
+		String normalized = contentType.trim().toLowerCase(Locale.ROOT);
+		int separator = normalized.indexOf(';');
+		if (separator >= 0) {
+			return normalized.substring(0, separator).trim();
+		}
+		return normalized;
 	}
 }

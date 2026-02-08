@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Locale;
 
 @Component
 public class PdfOcrTextExtractor implements TextExtractor {
@@ -23,26 +24,11 @@ public class PdfOcrTextExtractor implements TextExtractor {
 
 	@Override
 	public boolean supports(MultipartFile file) {
-		if (file == null) {
-			return false;
-		}
-		String contentType = file.getContentType();
-		if (contentType == null) {
-			return false;
-		}
-		int separator = contentType.indexOf(';');
-		if (separator >= 0) {
-			contentType = contentType.substring(0, separator);
-		}
-		return "application/pdf".equalsIgnoreCase(contentType.trim());
+		return "application/pdf".equals(normalizeContentType(file == null ? null : file.getContentType()));
 	}
 
 	@Override
 	public String extract(MultipartFile file) {
-		if (file == null || file.isEmpty()) {
-			throw new IllegalArgumentException("File is required");
-		}
-
 		try (PDDocument document = Loader.loadPDF(file.getBytes())) {
 			int pageCount = document.getNumberOfPages();
 			if (pageCount == 0) {
@@ -67,5 +53,17 @@ public class PdfOcrTextExtractor implements TextExtractor {
 		} catch (TesseractException e) {
 			throw new IllegalStateException("Failed to OCR rendered PDF page", e);
 		}
+	}
+
+	private String normalizeContentType(String contentType) {
+		if (contentType == null) {
+			return null;
+		}
+		String normalized = contentType.trim().toLowerCase(Locale.ROOT);
+		int separator = normalized.indexOf(';');
+		if (separator >= 0) {
+			return normalized.substring(0, separator).trim();
+		}
+		return normalized;
 	}
 }
