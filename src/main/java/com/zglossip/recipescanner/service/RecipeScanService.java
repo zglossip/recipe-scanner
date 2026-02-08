@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 @Service
 public class RecipeScanService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RecipeScanService.class);
+	private static final Logger RENDERED_TEXT_LOGGER = LoggerFactory.getLogger("renderedTextLogger");
 	private static final Set<String> IMAGE_EXTENSIONS = Set.of(
 			"bmp",
 			"gif",
@@ -69,7 +70,7 @@ public class RecipeScanService {
 
 		String text = extractor.extract(file);
 
-		LOGGER.info("Rendered text: {}", text);
+			RENDERED_TEXT_LOGGER.info("Rendered text: {}", text);
 
 		if (text == null || text.isBlank()) {
 			LOGGER.warn("OCR produced no text filename={} contentType={}",
