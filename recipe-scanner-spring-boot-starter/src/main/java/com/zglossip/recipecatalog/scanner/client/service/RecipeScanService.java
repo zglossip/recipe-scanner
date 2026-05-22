@@ -57,7 +57,7 @@ public class RecipeScanService {
           file.getOriginalFilename(),
           file.getContentType());
       throw new ResponseStatusException(
-          HttpStatus.UNPROCESSABLE_ENTITY,
+          HttpStatus.UNPROCESSABLE_CONTENT,
           "No text could be extracted from the file."
       );
     }
@@ -90,7 +90,7 @@ public class RecipeScanService {
           file.getOriginalFilename(),
           file.getContentType());
       throw new ResponseStatusException(
-          HttpStatus.UNPROCESSABLE_ENTITY,
+          HttpStatus.UNPROCESSABLE_CONTENT,
           "No text could be extracted from the file."
       );
     }
