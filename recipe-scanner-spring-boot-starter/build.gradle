@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.zglossip.recipecatalog"
-version = System.getenv('GITHUB_REF_NAME')?.replaceFirst(/^v/, '') ?: '0.2.1'
+version = System.getenv('GITHUB_REF_NAME')?.replaceFirst(/^v/, '') ?: '0.2.2'
 
 java {
     toolchain {
