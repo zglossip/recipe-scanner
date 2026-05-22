@@ -1,3 +1,5 @@
 rootProject.name = 'recipe-catalog-scanner'
 
 include 'recipe-scanner-app'
+
+include 'recipe-scanner-spring-boot-starter'

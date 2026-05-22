@@ -9,9 +9,6 @@ spring:
     problemdetails:
       enabled: true
 
-ocr:
-  language: "eng"
-
 server:
   error:
     include-stacktrace: never
