@@ -1,6 +1,8 @@
 FROM gradle:9-jdk25 AS build
 WORKDIR /app
 COPY --chown=gradle:gradle . .
+ARG GITHUB_ACTOR
+ARG GITHUB_TOKEN
 RUN gradle :recipe-scanner-app:bootJar --no-daemon
 
 FROM eclipse-temurin:25-jre
